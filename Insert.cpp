@@ -1,6 +1,11 @@
 //
 // Created by kwoodle on 3/21/18.
 //
+// wc -l CD1suf_01292018.txt 656715
+// count(*)                  656441 when Primary Key (SBOEID, STATUS, LASTNAME) and insert ignore
+// count(*)                  656436 when Primary Key (SBOEID, STATUS) and insert ignore
+// count(*)                  655168 when Primary Key (SBOEID, LASTNAME) and insert ignore
+
 
 #include "Voter.h"
 #include <ktrade/Ksql.h>
@@ -17,8 +22,8 @@ int main()
     // Get parameters from config file
     string service, user, pass;
     string database, table, source_file;
-//    ifstream cfg("../stats_test.ini");
-    ifstream cfg("../insert_test.ini");
+    ifstream cfg("../insert.ini");
+//    ifstream cfg("../insert_test.ini");
     if (!cfg.is_open()) {
         cout << "Failed to open config file\n";
         return 1;
@@ -55,7 +60,6 @@ int main()
     }
 
     drk::KSql kSql(service, user, pass);
-    kSql.Execute("use "+database);
 
     Json::CharReaderBuilder rbuilder;
     JRdrPtr const rdr(rbuilder.newCharReader());
@@ -74,7 +78,6 @@ int main()
 
 
     drk::Cols cols{kSql.get_cols(database, table)};
-    vector<vector<string>> pre_outs;
     vector<map<string, string>> to_set;
     const string regxstr{R"%%("(.*?)"[,\r])%%"};    // the original file has \r\n!!
     regex pat{regxstr};
@@ -150,7 +153,6 @@ int main()
             if (json.length()<5 or not_valid_json(rdr, json, err)) {
 //                cout << "json errors " << err << endl;
                 map.erase(fnd);
-//                json = "[[\"Invalid JSON\", 2018]]";
             }
             else {
 //                cout<<json<<endl;
@@ -171,13 +173,14 @@ int main()
 
     const string bktk{"`"};
     const string sq{"'"};
-    string trunc = "truncate table "+table;
+    string trunc = "truncate table "+database+"."+table;
     kSql.Execute(trunc);
-    string in0 = "insert ignore into "+table+" set ";
+    string in0 = "insert ignore into "+database+"."+table+" set ";
+//    string in0 = "insert into "+database+"."+table+" set ";
     kSql.set_autocommit(false);
-    for (auto m:to_set) {
+    for (auto item:to_set) {
         string ins{in0};
-        for (auto e:m) {
+        for (auto e:item) {
 //            cout << "<" << e.first << "->" << e.second << ">";
             if(e.first == "VoterHistory")
                 ins += e.first + "=" + sq+ e.second +sq+ ", ";
@@ -189,7 +192,6 @@ int main()
         ins.erase(ins.length()-2,2);
 //        cout<<ins<<endl;
         kSql.Execute(ins);
-        continue;
     }
     kSql.commit();
 
