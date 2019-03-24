@@ -53,114 +53,12 @@ const string drop_Suffolk_test {R"%%(
 )%%"
 };
 
-const string create_Suffolk_test{R"%%(
-CREATE TABLE `test.SuffTest` (
-  `LASTNAME` varchar(50) NOT NULL,
-  `FIRSTNAME` varchar(50) DEFAULT NULL,
-  `MIDDLENAME` varchar(50) DEFAULT NULL,
-  `NAMESUFFIX` varchar(10) DEFAULT NULL,
-  `RADDNUMBER` varchar(10) DEFAULT NULL,
-  `RHALFCODE` varchar(10) DEFAULT NULL,
-  `RAPARTMENT` varchar(15) DEFAULT NULL,
-  `RPREDIRECTION` varchar(10) DEFAULT NULL,
-  `RSTREETNAME` varchar(70) DEFAULT NULL,
-  `RPOSTDIRECTION` varchar(10) DEFAULT NULL,
-  `RCITY` varchar(50) DEFAULT NULL,
-  `RZIP5` varchar(5) DEFAULT NULL,
-  `RZIP4` varchar(4) DEFAULT NULL,
-  `MAILADD1` varchar(100) DEFAULT NULL,
-  `MAILADD2` varchar(100) DEFAULT NULL,
-  `MAILADD3` varchar(100) DEFAULT NULL,
-  `MAILADD4` varchar(100) DEFAULT NULL,
-  `DOB` varchar(8) DEFAULT NULL,
-  `GENDER` varchar(1) DEFAULT NULL,
-  `ENROLLMENT` varchar(3) DEFAULT NULL,
-  `OTHERPARTY` varchar(30) DEFAULT NULL,
-  `COUNTYCODE` varchar(2) DEFAULT NULL,
-  `ED` int(11) DEFAULT NULL,
-  `LD` int(11) DEFAULT NULL,
-  `TOWNCITY` varchar(30) DEFAULT NULL,
-  `WARD` varchar(3) DEFAULT NULL,
-  `CD` int(11) DEFAULT NULL,
-  `SD` int(11) DEFAULT NULL,
-  `AD` int(11) DEFAULT NULL,
-  `LASTVOTEDDATE` varchar(8) DEFAULT NULL,
-  `PREVYEARVOTED` varchar(4) DEFAULT NULL,
-  `PREVCOUNTY` varchar(2) DEFAULT NULL,
-  `PREVADDRESS` varchar(100) DEFAULT NULL,
-  `PREVNAME` varchar(150) DEFAULT NULL,
-  `COUNTYVRNUMBER` varchar(50) DEFAULT NULL,
-  `REGDATE` varchar(8) DEFAULT NULL,
-  `VRSOURCE` varchar(10) DEFAULT NULL,
-  `IDREQUIRED` varchar(1) DEFAULT NULL,
-  `IDMET` varchar(1) DEFAULT NULL,
-  `STATUS` varchar(10) DEFAULT NULL,
-  `REASONCODE` varchar(15) DEFAULT NULL,
-  `INACT_DATE` varchar(8) DEFAULT NULL,
-  `PURGE_DATE` varchar(8) DEFAULT NULL,
-  `SBOEID` varchar(50) NOT NULL,
-  `VoterHistory` text,
-  PRIMARY KEY (`LASTNAME`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1
-)%%"
-};
 
 const string drop_Suffolk {R"%%(
     truncate table if exists voting.Suffolk2018;
 )%%"
 };
 
-const string create_Suffolk{R"%%(
-CREATE TABLE `voting.Suffolk2018` (
-  `LASTNAME` varchar(50) NOT NULL,
-  `FIRSTNAME` varchar(50) DEFAULT NULL,
-  `MIDDLENAME` varchar(50) DEFAULT NULL,
-  `NAMESUFFIX` varchar(10) DEFAULT NULL,
-  `RADDNUMBER` varchar(10) DEFAULT NULL,
-  `RHALFCODE` varchar(10) DEFAULT NULL,
-  `RAPARTMENT` varchar(15) DEFAULT NULL,
-  `RPREDIRECTION` varchar(10) DEFAULT NULL,
-  `RSTREETNAME` varchar(70) DEFAULT NULL,
-  `RPOSTDIRECTION` varchar(10) DEFAULT NULL,
-  `RCITY` varchar(50) DEFAULT NULL,
-  `RZIP5` varchar(5) DEFAULT NULL,
-  `RZIP4` varchar(4) DEFAULT NULL,
-  `MAILADD1` varchar(100) DEFAULT NULL,
-  `MAILADD2` varchar(100) DEFAULT NULL,
-  `MAILADD3` varchar(100) DEFAULT NULL,
-  `MAILADD4` varchar(100) DEFAULT NULL,
-  `DOB` varchar(8) DEFAULT NULL,
-  `GENDER` varchar(1) DEFAULT NULL,
-  `ENROLLMENT` varchar(3) DEFAULT NULL,
-  `OTHERPARTY` varchar(30) DEFAULT NULL,
-  `COUNTYCODE` varchar(2) DEFAULT NULL,
-  `ED` int(11) DEFAULT NULL,
-  `LD` int(11) DEFAULT NULL,
-  `TOWNCITY` varchar(30) DEFAULT NULL,
-  `WARD` varchar(3) DEFAULT NULL,
-  `CD` int(11) DEFAULT NULL,
-  `SD` int(11) DEFAULT NULL,
-  `AD` int(11) DEFAULT NULL,
-  `LASTVOTEDDATE` varchar(8) DEFAULT NULL,
-  `PREVYEARVOTED` varchar(4) DEFAULT NULL,
-  `PREVCOUNTY` varchar(2) DEFAULT NULL,
-  `PREVADDRESS` varchar(100) DEFAULT NULL,
-  `PREVNAME` varchar(150) DEFAULT NULL,
-  `COUNTYVRNUMBER` varchar(50) DEFAULT NULL,
-  `REGDATE` varchar(8) DEFAULT NULL,
-  `VRSOURCE` varchar(10) DEFAULT NULL,
-  `IDREQUIRED` varchar(1) DEFAULT NULL,
-  `IDMET` varchar(1) DEFAULT NULL,
-  `STATUS` varchar(10) DEFAULT NULL,
-  `REASONCODE` varchar(15) DEFAULT NULL,
-  `INACT_DATE` varchar(8) DEFAULT NULL,
-  `PURGE_DATE` varchar(8) DEFAULT NULL,
-  `SBOEID` varchar(50) NOT NULL,
-  `VoterHistory` text,
-  PRIMARY KEY (`LASTNAME`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1
-)%%"
-};
 
 // dates in voter record, change from 1 to zero based
 // DOB - col17, LASTVOTEDDATE  - col29, REGDATE - col 35,
@@ -172,4 +70,5 @@ void format_date(string&);
 // don't create 0000-00-00
 void form_date(string&);
 //mysql_options(&mysql,MYSQL_INIT_COMMAND,"SET autocommit=0"); C API
+
 #endif //VOTERDATA_VOTER_H

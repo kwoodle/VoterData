@@ -22,8 +22,8 @@ int main()
     // Get parameters from config file
     string service, user, pass;
     string database, table, source_file;
-    ifstream cfg("../insert.ini");
-//    ifstream cfg("../insert_test.ini");
+//    ifstream cfg("../insert.ini");
+    ifstream cfg("../insert_test.ini");
     if (!cfg.is_open()) {
         cout << "Failed to open config file\n";
         return 1;
@@ -58,9 +58,10 @@ int main()
         cout << "Failed to open source file " << source_file << endl;
         return 1;
     }
-
+    // Connect to MySQL
     drk::KSql kSql(service, user, pass);
 
+    // To read/validate VoterHistory JSON
     Json::CharReaderBuilder rbuilder;
     JRdrPtr const rdr(rbuilder.newCharReader());
 
@@ -76,7 +77,8 @@ int main()
     //          cout<<i<<"\t"<<pcols[i].first<<"\t"<<pcols[i].second<<"\n";
     //      }
 
-
+    // Read/Parse csv file and populate to_set
+    //
     drk::Cols cols{kSql.get_cols(database, table)};
     vector<map<string, string>> to_set;
     const string regxstr{R"%%("(.*?)"[,\r])%%"};    // the original file has \r\n!!
@@ -116,10 +118,14 @@ int main()
 */
     // json-ize the voter history,
     // and congeal the strings
-
+    //
+    // Prior version produced JSON list of lists
+    //
+// ACHUTHAN!NY000000000009695440![["General Election",  2017], ["Primary Election",  2017], ["General Election",  2016],
+// ["Federal Primary",  2016], ["Presidential Primary",  2016], ["General Election",  2015], ["General Election",  2014],
+// ["General Election",  2013], ["General Election",  2012], ["General Election",  2010], ["General Election",  2008],
+// ["Presidential Primary",  2008], ["General Election",  2006], ["General Election",  2004], []]
     const string quote{"\""};
-    const string ostart{"[["};
-    const string split{"], ["};
     const string pats2{"(.+?),(.+?)"};
     const string pats{"(.+?),(.+?);"};
     // const string pats_close{"(.+?),(.+?);"}; // misses the last on list
@@ -128,37 +134,77 @@ int main()
     regex pat2{pats2};
 
     cout << "pats = " << pats << endl;
-    for (auto& map:to_set) {
-        auto fnd = map.find("VoterHistory");
-        if (fnd!=map.end()) {
-            string json{ostart};
-            while (regex_search(fnd->second, m, pat)) {
-                json += quote;
-                json += m[1];
-                json += quote+", ";
-                json += m[2];
-                json += split;
-                fnd->second = m.suffix();
-                continue;
+    //
+    // Better will be list of objects. Each object has {key:value} like {"General Election":[2017, 2016, 2015...]}
+    // starting from
+//  <VoterHistory->General Election, 2012;General Election, 2008;Primary Election, 2005;General Election, 2004;General Election, 2003>
+
+    for (auto& field_map:to_set) {
+        auto findVH = field_map.find("VoterHistory");
+        if (findVH!=field_map.end()) {
+            map<string, vector<string>> mj;
+            while (regex_search(findVH->second, m, pat)) {
+                string key{m[1]};
+                string val{m[2]};
+                findVH->second = m.suffix();
+                mj[key].push_back(val);
             }
-            if (regex_match(fnd->second, m, pat2)) {
-                json += quote;
-                json += m[1];
-                json += quote+", ";
-                json += m[2];
-                json += split;
+            if (regex_match(findVH->second, m, pat2)) {
+                string key{m[1]};
+                string val{m[2]};
+                mj[key].push_back(val);
             }
-            json += "]]";
-            string err;
-            if (json.length()<5 or not_valid_json(rdr, json, err)) {
-//                cout << "json errors " << err << endl;
-                map.erase(fnd);
+            auto sz{mj.size()};
+            if (sz==0) {
+                auto st{field_map.find("STATUS")};
+                cout << "Unexpected Voter History Layout\n";
+                cout << findVH->second << "\n";
+                cout << "Status" << st->second << "\n";
+                field_map.erase(findVH);
             }
             else {
-//                cout<<json<<endl;
-                json.erase(json.length()-5,4);
-                fnd->second = json;
+                string json;
+                json = "[{";
+// {"General Election":[2017, 2016, 2015...]}
+                for (auto j:mj) {
+                    json += quote;
+                    json += j.first+quote+" : ";
+                    auto sz2{j.second.size()};
+                    json += "[";
+                    for (auto yr:j.second) {
+                        json += yr+", ";
+                    }
+                    json.erase(json.length()-2);
+                    json += "]";
+                    json += "}, {";
+                }
+                json.erase(json.length()-3);
+                json += "]";
+                string err;
+                if (json.length()<5 or not_valid_json(rdr, json, err)) {
+                    cout << json << "\n";
+                    cout << "json errors " << err << endl;
+                    field_map.erase(findVH);
+                }
+                else {
+//                cout << json << endl;
+//                json.erase(json.length()-5, 4);
+                    findVH->second = json;
+                }
             }
+        }
+        // convert NY000000000009701159 to int and back to string
+        //     string s2{std::regex_replace(s1, pat1, table_schema)};
+        auto findID = field_map.find("SBOEID");
+        if (findID!=field_map.end()) {
+            std::regex regex1{"NY"};
+            string id{findID->second};
+            string id2{std::regex_replace(id, regex1, "")};
+            int intid{stoi(id2)};
+            findID->second = to_string(intid);
+        }
+        else {
+            cout << "SBOEID not found!\n";
         }
     }
 /*    for (auto m:to_set) {
@@ -171,7 +217,7 @@ int main()
     // Use sql insert instead of load data infile to handle nulls correctly
     // INSERT INTO table SET field1 = 'value1', field2 = 'value2';
 
-    const string bktk{"`"};
+//    const string bktk{"`"};
     const string sq{"'"};
     string trunc = "truncate table "+database+"."+table;
     kSql.Execute(trunc);
@@ -182,18 +228,17 @@ int main()
         string ins{in0};
         for (auto e:item) {
 //            cout << "<" << e.first << "->" << e.second << ">";
-            if(e.first == "VoterHistory")
-                ins += e.first + "=" + sq+ e.second +sq+ ", ";
+            if (e.first=="VoterHistory")
+                ins += e.first+"="+sq+e.second+sq+", ";
             else
-                ins += e.first + "=" + quote+ e.second +quote+ ", ";
+                ins += e.first+"="+quote+e.second+quote+", ";
 
         }
 //        cout << endl;
-        ins.erase(ins.length()-2,2);
+        ins.erase(ins.length()-2, 2);
 //        cout<<ins<<endl;
         kSql.Execute(ins);
     }
     kSql.commit();
-
     return 0;
 }

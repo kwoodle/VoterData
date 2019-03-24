@@ -1,3 +1,5 @@
+-- use test;
+-- use voting;
 drop table if exists `CD1_2018`;
 CREATE TABLE `CD1_2018` (
   `LASTNAME` varchar(50) NOT NULL,
@@ -43,7 +45,7 @@ CREATE TABLE `CD1_2018` (
   `REASONCODE` enum('NCOA', 'MOVED', 'OTHER', 'COURT', 'DEATH', 'MAILCHECK', 'INACTIVE'), --  !In table, not in doc!
   `INACT_DATE` date DEFAULT NULL,
   `PURGE_DATE` date DEFAULT NULL,
-  `SBOEID` varchar(50) NOT NULL,
+  `SBOEID` int NOT NULL,
   `VoterHistory` json DEFAULT NULL,
   PRIMARY KEY (`SBOEID`, `STATUS`, `LASTNAME`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;

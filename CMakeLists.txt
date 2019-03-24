@@ -8,7 +8,7 @@ set(CMAKE_CXX_STANDARD 11)
 
 add_executable(CreateJSON CreateJSON.cpp Voter.h Voter.cpp)
 add_executable(CreateCD1 CreateCD1.cpp Voter.h Voter.cpp)
-add_executable(Stats Stats.cpp Stats.h)
+add_executable(Stats Stats.cpp Stats.h Voter.h Voter.cpp)
 add_executable(Insert Insert.cpp Voter.h Voter.cpp)
 include(/usr/local/lib/ktrade/cmake/ktrade-targets.cmake)
 

@@ -1,0 +1,1 @@
+create function vhist(k char(50))
