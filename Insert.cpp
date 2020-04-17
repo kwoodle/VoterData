@@ -109,13 +109,13 @@ int main()
     }
     infile.close();
 
-/*    for (auto m:to_set) {
+    for (auto m:to_set) {
         for (auto e:m) {
             cout << "<" << e.first << "->" << e.second << ">";
         }
         cout << endl;
     }
-*/
+
     // json-ize the voter history,
     // and congeal the strings
     //
@@ -157,9 +157,11 @@ int main()
             auto sz{mj.size()};
             if (sz==0) {
                 auto st{field_map.find("STATUS")};
+                auto ln{field_map.find("LASTNAME")};
                 cout << "Unexpected Voter History Layout\n";
                 cout << findVH->second << "\n";
                 cout << "Status" << st->second << "\n";
+                cout << "Lastname" << ln->second << "\n";
                 field_map.erase(findVH);
             }
             else {

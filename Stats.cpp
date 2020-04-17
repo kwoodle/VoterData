@@ -17,7 +17,7 @@ int main()
     // Get parameters from config file
     string service, user, pass;
     string database;
-    ifstream cfg("../stats_test.ini");
+    ifstream cfg("../stats.ini");
 //    ifstream cfg("../voter.ini");
     if (!cfg.is_open()) {
         cout << "Failed to open config file\n";
@@ -43,8 +43,8 @@ int main()
     database = vm["mysql.database"].as<string>();
 
     drk::KSql kSql(service, user, pass);
-//    kSql.Execute("use "+database);
-//    row_stats(kSql);
+    kSql.Execute("use "+database);
+    row_stats(kSql);
 //    hist_stats(kSql);
 //    histograms();
 //    string tbl{R"%%(test.CD1_2018)%%"};
