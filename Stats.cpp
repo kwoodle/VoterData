@@ -14,8 +14,9 @@ namespace po = boost::program_options;
 //using VHist = vector<map<string, vector<int>>>;
 int main()
 {
+    drk::MySqlOptions opts;
+    drk::KSql kSql(opts);
     // Get parameters from config file
-    string service, user, pass;
     string database;
     ifstream cfg("../stats.ini");
 //    ifstream cfg("../voter.ini");
@@ -25,9 +26,6 @@ int main()
     }
     po::options_description desc("Config");
     desc.add_options()
-            ("mysql.service", po::value<string>())
-            ("mysql.user", po::value<string>())
-            ("mysql.password", po::value<string>())
             ("mysql.database", po::value<string>());
 
     po::variables_map vm;
@@ -37,12 +35,9 @@ int main()
     store(parse_config_file(cfg, desc, true), vm);
     notify(vm);
 
-    service = vm["mysql.service"].as<string>();
-    user = vm["mysql.user"].as<string>();
-    pass = vm["mysql.password"].as<string>();
+
     database = vm["mysql.database"].as<string>();
 
-    drk::KSql kSql(service, user, pass);
     kSql.Execute("use "+database);
     row_stats(kSql);
 //    hist_stats(kSql);

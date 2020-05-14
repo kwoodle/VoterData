@@ -18,9 +18,10 @@ namespace po = boost::program_options;
 
 int main()
 {
+    drk::MySqlOptions opts;
+    drk::KSql kSql(opts);
 
     // Get parameters from config file
-    string service, user, pass;
     string database, table, source_file;
 //    ifstream cfg("../insert.ini");
     ifstream cfg("../insert_test.ini");
@@ -30,10 +31,7 @@ int main()
     }
     po::options_description desc("Config");
     desc.add_options()
-            ("mysql.service", po::value<string>())
-            ("mysql.user", po::value<string>())
-            ("mysql.password", po::value<string>())
-            ("files.source_file", po::value<string>())
+     ("files.source_file", po::value<string>())
             ("mysql.database", po::value<string>())
             ("mysql.table", po::value<string>());
 
@@ -44,9 +42,6 @@ int main()
     store(parse_config_file(cfg, desc, true), vm);
     notify(vm);
 
-    service = vm["mysql.service"].as<string>();
-    user = vm["mysql.user"].as<string>();
-    pass = vm["mysql.password"].as<string>();
     database = vm["mysql.database"].as<string>();
     table = vm["mysql.table"].as<string>();
     source_file = vm["files.source_file"].as<string>();
@@ -59,7 +54,6 @@ int main()
         return 1;
     }
     // Connect to MySQL
-    drk::KSql kSql(service, user, pass);
 
     // To read/validate VoterHistory JSON
     Json::CharReaderBuilder rbuilder;

@@ -4,7 +4,7 @@
 // LASTNAME, SBOEID, VoterHistoryJSON
 // with Foreign key linked to main table
 //
-//
+// This file obsolete. Voterhist now handled by Insert.cpp
 
 #include "Voter.h"
 #include <fstream>
@@ -18,13 +18,16 @@
 #include <cppconn/resultset.h>
 #include <cppconn/statement.h>
 #include <cppconn/prepared_statement.h>
+#include <ktrade/Ksql.h>
 
 using namespace std;
 namespace po = boost::program_options;
 int main()
 {
+    drk::MySqlOptions opts;
+    drk::KSql kSql(opts);
+
     // Get parameters from config file
-    string service, user, pass;
     string database, table_in, table_out;
     string csv_file{"/var/tmp/ktrade/"};
 
@@ -38,9 +41,6 @@ int main()
     po::options_description desc("Config");
     desc.add_options()
             ("files.csv_to_load", po::value<string>())
-            ("mysql.service", po::value<string>())
-            ("mysql.user", po::value<string>())
-            ("mysql.password", po::value<string>())
             ("mysql.database", po::value<string>())
             ("mysql.table_in", po::value<string>())
             ("mysql.table_out", po::value<string>());
@@ -53,9 +53,7 @@ int main()
     notify(vm);
 
     csv_file += vm["files.csv_to_load"].as<string>();
-    service = vm["mysql.service"].as<string>();
-    user = vm["mysql.user"].as<string>();
-    pass = vm["mysql.password"].as<string>();
+
     database = vm["mysql.database"].as<string>();
     table_in = vm["mysql.table_in"].as<string>();
     table_out = vm["mysql.table_out"].as<string>();
@@ -68,30 +66,17 @@ int main()
     }
 
     try {
-
-        // from https://dev.mysql.com/doc/connector-cpp/en/connector-cpp-examples-complete-example-2.html
-        // connect to server
-        //
-        auto con{get_driver_instance()->connect("localhost", user, pass)};
-        //
-        // select the database
-        con->setSchema(service);
-
-        auto stmt{con->createStatement()};
-        //
-        // select database
-        string cmd{"use "+database+";"};
-        stmt->execute(cmd.c_str());
-
+        kSql.set_schema(database);
 //        cmd = drop_vhist_json_test.c_str();
 //        stmt->execute(cmd);
+//        kSql.Execute(drop_vhist_json_test);
 
 //        cmd = create_vhist_json_test.c_str();
 //        stmt->execute(cmd);
+//        kSql.Execute(create_vhist_json_test);
 
-
-        cmd = string{"select LASTNAME, SBOEID, VoterHistory from "}+table_in.c_str();
-        auto result{stmt->executeQuery(cmd.c_str())};
+        string cmd = string{"select LASTNAME, SBOEID, VoterHistory from "}+table_in.c_str();
+        auto result{kSql.ExcuteQuery(cmd)};
 
         vector<tuple<string, string, string>> ins;
         while (result->next()) {
@@ -158,12 +143,10 @@ ACQUINO!NY000000000009701523![["General Election",  2016], []]
         load_data += "replace into table " + database + "." + table_out;
 //        load_data += " fields terminated by \'!\';";
         load_data += " fields terminated by \'!\' ignore 606715 lines;";
-        auto res = stmt->execute((load_data.c_str()));
+
+        auto res = kSql.ExcuteQuery(load_data);
 
         delete result;
-        delete stmt;
-        delete con;
-
     }
     catch (sql::SQLException& e) {
         cout << "# ERR: SQLException in " << __FILE__;

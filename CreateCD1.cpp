@@ -15,6 +15,7 @@ Edit /etc/my.cnf, remove NO_ZERO_DATE
 # Enable insertion of NULL dates
 sql_mode=ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION
  */
+// This file obsoleted by Insert.cpp
 
 #include "Voter.h"
 #include <fstream>
