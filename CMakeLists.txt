@@ -16,7 +16,7 @@ add_executable(Insert Insert.cpp Voter.h Voter.cpp)
 include(/usr/local/lib/ktrade/cmake/ktrade-targets.cmake)
 
 # boost
-find_package(Boost 1.64 COMPONENTS system filesystem program_options)
+find_package(Boost 1.64 COMPONENTS system filesystem program_options date_time)
 include_directories(${Boost_INCLUDE_DIRS})
 target_link_libraries(Insert ${Boost_LIBRARIES})
 

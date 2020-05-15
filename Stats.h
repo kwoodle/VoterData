@@ -34,17 +34,19 @@ void histograms();
 void dates();
 
 // {"General Election":[2017, 2016, 2015...]}
-extern const string vhist_template;
 
-string vhist_replace(string table, string race, string dates);
+const string vhist_template{R"%%(select test.age_2017(dob) as 'Age', enrollment
+from <VHIST_TABLE> where JSON_CONTAINS(voterhistory->'$[*]."<VHIST_RACE>"[*]', <VHIST_DATES>) = 1)%%"};
+
+string vhist_replace(const string& table, const string& race, const string& dates);
 
 struct VHist {
     using Vmap = map<string, vector<int>>;
-    VHist(const string& s)
+    explicit VHist(const string& s)
     {
         vhist = json::parse(s);
     }
-    string dump(const int indent = -1, const char indch = ' ', const bool ens = false)
+    string dump(const int indent = -1, const char indch = ' ', const bool ens = false) const
     {
         return vhist.dump(indent, indch, ens);
     }

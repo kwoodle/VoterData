@@ -108,7 +108,7 @@ void hist_stats(drk::KSql& kSql)
         string hist{res->getString("voterhistory")};
         string lvd{res->getString("lvd")};
         string regd{res->getString("regdate")};
-        lvd = lvd=="" ? "NULL" : lvd;
+        lvd = lvd.empty() ? "NULL" : lvd;
         Json::Value val;
         string errs;
         bool good{rdr->parse(hist.data(), hist.data()+hist.length(), &val, &errs)};
@@ -143,7 +143,7 @@ void histograms()
     cout << "\n" << gplot << "\n";
     FILE* GNU;
     GNU = popen(gplot.c_str(), "w");
-    if (GNU==NULL) {
+    if (GNU==nullptr) {
         std::cerr << "Error opening pipe to GNU plot!\n";
         exit(1);
     }
@@ -159,7 +159,7 @@ maxa = Aa_max
 minla = la_min
 maxla = la_max
 )%%";
-    fprintf(GNU, cmd.c_str());
+    fprintf(GNU, "%s", cmd.c_str());
     string cmd2 = R"%%(set boxwidth 1
 set style fill pattern 4
 set tics out nomirror
@@ -181,7 +181,7 @@ plot '../gnuplot/w4data' using (column(col)):(1) smooth frequency with boxes fil
 unset multiplot
 pause -1 "Hit return to continue"
 )%%";
-    fprintf(GNU, cmd2.c_str());
+    fprintf(GNU, "%s", cmd2.c_str());
     pclose(GNU);
     string script{cmd+cmd2};
     string scrname{"../gnuplot/script.gnu"};
@@ -228,9 +228,7 @@ void vhist_stats(drk::KSql& kSql, const string& table, const string& race)
     delete res;
 }
 
-const string vhist_template{R"%%(select test.age_2017(dob) as 'Age', enrollment
-from <VHIST_TABLE> where JSON_CONTAINS(voterhistory->'$[*]."<VHIST_RACE>"[*]', <VHIST_DATES>) = 1)%%"};
-string vhist_replace(string table, string race, string dates)
+string vhist_replace(const string& table, const string& race, const string& dates)
 {
     string s1{vhist_template};
     std::regex pat1{"<VHIST_RACE>"};
@@ -254,7 +252,7 @@ void vhist(const string& table, const string& race)
     cout << "\n" << gplot << "\n";
     FILE* GNU;
     GNU = popen(gplot.c_str(), "w");
-    if (GNU==NULL) {
+    if (GNU==nullptr) {
         std::cerr << "Error opening pipe to GNU plot!\n";
         exit(1);
     }
@@ -264,7 +262,7 @@ stats '../out/vhist_out.txt' using col name "Aa" nooutput
 mina = Aa_min
 maxa = Aa_max
 )%%";
-    fprintf(GNU, cmd.c_str());
+    fprintf(GNU, "%s", cmd.c_str());
 
 }
 void dates()
@@ -310,7 +308,7 @@ void dates()
     cout << "\n" << gplot << "\n";
     FILE* GNU;
     GNU = popen(gplot.c_str(), "w");
-    if (GNU==NULL) {
+    if (GNU==nullptr) {
         std::cerr << "Error opening pipe to GNU plot!\n";
         exit(1);
     }
@@ -336,7 +334,7 @@ plot '../gnuplot/votehisdata4' using (column(col)):(1) smooth frequency with box
      '../gnuplot/votehisdata2' using (column(col)):(1) smooth frequency with boxes fill pattern 4 title 'voted 2017 only'
 pause -1 "Hit return to continue"
 )%%";
-    fprintf(GNU, cmd.c_str());
+    fprintf(GNU, "%s", cmd.c_str());
     pclose(GNU);
     string scrname{"../gnuplot/script_age.gnu"};
     ofstream scrs(scrname);
