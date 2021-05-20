@@ -54,24 +54,24 @@ int main()
 void row_stats(drk::KSql& kSql)
 {
     string sqlstring{"select count(*) as `total` from ward4"};
-    long total_ward4;
+    long total_ward4{-1};
     auto res = kSql.ExcuteQuery(sqlstring);
     while (res->next()) {
         total_ward4 = res->getInt("total");
     }
-    long total_cd1;
+    long total_cd1{-1};
     sqlstring = "select count(*) as `total` from CD1_2018";
     res = kSql.ExcuteQuery(sqlstring);
     while (res->next()) {
         total_cd1 = res->getInt("total");
     }
-    long total_active_ward4;
+    long total_active_ward4{-1};
     sqlstring = "select count(*) as 'total active' from ward4active";
     res = kSql.ExcuteQuery(sqlstring);
     while (res->next()) {
         total_active_ward4 = res->getInt("total active");
     }
-    long total_active_CD1;
+    long total_active_CD1{-1};
     sqlstring = "select count(*) as 'total active' from CD1_2018active";
     res = kSql.ExcuteQuery(sqlstring);
     while (res->next()) {

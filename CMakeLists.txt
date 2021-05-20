@@ -1,14 +1,8 @@
 # VoterData
-# Finally figured out that manually copying .cmake files to /usr/share/cmake/Modules
-# (or other standard locations) is a bad idea. Use a "local" directory for nonstandard
-# installations
-# Also there is confusion if using CLion built-in cmake and issuing cmake --help-modules from the
-# cmd line with a different version of cmake
 
 cmake_minimum_required(VERSION 3.9)
 project(VoterData)
 
-list(APPEND CMAKE_MODULE_PATH /home/kwoodle/CLionProjects/cmake)
 set(CMAKE_CXX_STANDARD 11)
 
 add_executable(Stats Stats.cpp Stats.h Voter.h Voter.cpp)
@@ -17,18 +11,10 @@ include(/usr/local/lib/ktrade/cmake/ktrade-targets.cmake)
 
 # boost
 find_package(Boost 1.64 COMPONENTS system filesystem program_options date_time)
-include_directories(${Boost_INCLUDE_DIRS})
-target_link_libraries(Insert ${Boost_LIBRARIES})
-
-# MySQL
-set(MYSQL_EXTRA_LIBRARIES mysqlcppconn)
-find_package(MySQL)
-include_directories(${MYSQL_INCLUDE_DIR})
-
-target_link_libraries(Insert ${MYSQL_LIBRARIES} ${MYSQL_EXTRA_LIBRARIES})
 
 # JsonCpp
 # See https://github.com/open-source-parsers/jsoncpp/issues/455
+
 find_package(jsoncpp REQUIRED)
 get_target_property(JSON_INC_PATH jsoncpp_lib INTERFACE_INCLUDE_DIRECTORIES)
 include_directories(${JSON_INC_PATH})

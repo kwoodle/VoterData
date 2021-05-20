@@ -16,6 +16,7 @@ Edit /etc/my.cnf, remove NO_ZERO_DATE
 sql_mode=ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_AUTO_CREATE_USER,NO_ENGINE_SUBSTITUTION
  */
 // This file obsoleted by Insert.cpp
+// For future reference, to use load data local infile, try set sql_mode=''; before loading
 
 #include "Voter.h"
 #include <fstream>
@@ -40,8 +41,8 @@ int main()
     string database, source_file, table_out;
     string bangsv_file{"/var/tmp/ktrade/"};
 
-//    ifstream cfg("../voter.ini");
-    ifstream cfg("../voter_test.ini");
+    ifstream cfg("../voter.ini");
+//    ifstream cfg("../voter_test.ini");
     if (!cfg.is_open()) {
         cout << "Failed to open config file\n";
         return 1;
