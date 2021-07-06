@@ -55,25 +55,25 @@ void row_stats(drk::KSql& kSql)
 {
     string sqlstring{"select count(*) as `total` from ward4"};
     long total_ward4{-1};
-    auto res = kSql.ExcuteQuery(sqlstring);
+    auto res = kSql.ExecuteQuery(sqlstring);
     while (res->next()) {
         total_ward4 = res->getInt("total");
     }
     long total_cd1{-1};
     sqlstring = "select count(*) as `total` from CD1_2018";
-    res = kSql.ExcuteQuery(sqlstring);
+    res = kSql.ExecuteQuery(sqlstring);
     while (res->next()) {
         total_cd1 = res->getInt("total");
     }
     long total_active_ward4{-1};
     sqlstring = "select count(*) as 'total active' from ward4active";
-    res = kSql.ExcuteQuery(sqlstring);
+    res = kSql.ExecuteQuery(sqlstring);
     while (res->next()) {
         total_active_ward4 = res->getInt("total active");
     }
     long total_active_CD1{-1};
     sqlstring = "select count(*) as 'total active' from CD1_2018active";
-    res = kSql.ExcuteQuery(sqlstring);
+    res = kSql.ExecuteQuery(sqlstring);
     while (res->next()) {
         total_active_CD1 = res->getInt("total active");
     }
@@ -102,7 +102,7 @@ void hist_stats(drk::KSql& kSql)
     string sqlstr("select lastname, lastvoteddate as lvd, voterhistory"
                   ", regdate from ward4active where lastname like 'wood%'");
 //    string sqlstr("select lastname, lastvoteddate as lvd, voterhistory, regdate from CD1_2018");
-    auto res = kSql.ExcuteQuery(sqlstr);
+    auto res = kSql.ExecuteQuery(sqlstr);
     while (res->next()) {
         string nm{res->getString("lastname")};
         string hist{res->getString("voterhistory")};
@@ -206,7 +206,7 @@ void vhist_stats(drk::KSql& kSql, const string& table, const string& race)
     Json::Value root;
     string errs;
     vector<vector<int>> outs;
-    auto res{kSql.ExcuteQuery(sql)};
+    auto res{kSql.ExecuteQuery(sql)};
     while (res->next()) {
         string r{res->getString(1)};
         bool good = rdr->parse(r.data(), r.data()+r.length(), &root, &errs);
