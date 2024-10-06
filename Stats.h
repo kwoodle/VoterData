@@ -9,7 +9,7 @@
 #include <string>
 #include <map>
 #include <vector>
-#include <ktrade/nlohmann/json.hpp>
+#include <nlohmann/json.hpp>
 
 using std::string;
 using std::vector;

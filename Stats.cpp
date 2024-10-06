@@ -4,7 +4,6 @@
 
 #include <ktrade/Ksql.h>
 #include <ktrade/Util.h>
-#include <boost/program_options.hpp>
 #include "Stats.h"
 #include "Voter.h"
 #include <regex>

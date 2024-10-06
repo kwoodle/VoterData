@@ -9,7 +9,7 @@
 
 #include "Voter.h"
 #include <ktrade/Ksql.h>
-#include <boost/program_options.hpp>
+#include <ktrade/Util.h>
 #include <fstream>
 #include <regex>
 
