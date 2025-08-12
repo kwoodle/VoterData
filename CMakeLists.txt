@@ -1,5 +1,5 @@
 # VoterData
-
+# 12 Aug 2025 -D CMAKE_POLICY_VERSION_MINIMUM=3.5
 cmake_minimum_required(VERSION 3.9)
 project(VoterData)
 
@@ -10,7 +10,7 @@ add_executable(Insert Insert.cpp Voter.h Voter.cpp)
 include(/usr/local/lib/ktrade/cmake/ktrade-targets.cmake)
 
 # boost
-find_package(Boost 1.64 COMPONENTS system filesystem program_options date_time)
+find_package(Boost 1.64 CONFIG COMPONENTS system filesystem program_options date_time)
 
 # JsonCpp
 # See https://github.com/open-source-parsers/jsoncpp/issues/455

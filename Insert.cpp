@@ -1,6 +1,7 @@
 //
 // Created by kwoodle on 3/21/18.
 //
+// 2024 Use sql!!!!
 // wc -l CD1suf_01292018.txt 656715
 // count(*)                  656441 when Primary Key (SBOEID, STATUS, LASTNAME) and insert ignore
 // count(*)                  656436 when Primary Key (SBOEID, STATUS) and insert ignore
