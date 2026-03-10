@@ -1,3 +1,5 @@
+// This method obsolete. Use sqls/create_CD_xxx.sql
+
 // CreateCD1.cpp
 
 // Created by kwoodle on 2/8/18.
